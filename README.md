@@ -66,7 +66,6 @@ AND CATEGORY IS NULL
 
 UNION ALL
 
-
 -----------------------MISSING INCIDENT TYPE
 SELECT 
 I.STUDENTSCHOOLID AS STUDENT_NUMBER,
@@ -957,6 +956,8 @@ AND PS_ATT.ATT_CODE != DL_ATT.ATTENDANCECODE
 AND PS_ATT.ENROLL_STATUS = 1
 AND S.HOME_ROOM NOT LIKE 'LC%'
 
+union all 
+
 -----------------------OVERLAPPING OSS 
 
 select 
@@ -967,6 +968,7 @@ i.studentschoolid as student_number
 ,cal.yearid as yearid
 ,i.gradelevelshort as grade_level
 ,s.lastfirst as lastfirst
+,NULL as link 
 ,'Overlapping OSS' as error, 
 'DeansList' as sourcesystem,
 1 ERRORID 
@@ -995,6 +997,8 @@ inner join(select penaltyname, startdate, incidentid, enddate, studentschoolid
 
 where p.penaltyname = 'OSS'
 
+union all 
+
 
 -----------------------ONE INCIDENT ID WITH MULTIPLE INCIDENTS
 
@@ -1007,10 +1011,11 @@ i.studentschoolid as student_number
 ,cal.yearid as yearid
 ,i.gradelevelshort as grade_level
 ,s.lastfirst as lastfirst
+,NULL as link 
 ,'1 incident ID with multiple incidents' as error
 ,'DeansList' as sourcesystem
-,count(i.incidentid) as numoccurences,
-2 errorid 
+--,count(i.incidentid) as numoccurences,
+,2 errorid 
 from
 custom.custom_dlincidents_raw i 
 left join custom.custom_dlpenalties_raw p on p.incidentid = i.incidentid
@@ -1030,6 +1035,7 @@ JOIN (SELECT DISTINCT
      group by i.incidentid, i.studentschoolid, i.schoolid, i.issuets, cal.yearid, i.gradelevelshort, s.lastfirst
      having (count(i.incidentid) > 1)
 
+union all 
 
 -----------------------UNRESOLVED REFERRAL OLDER THAN 30 DAYS
 
@@ -1042,6 +1048,7 @@ i.studentschoolid as student_number
 ,cal.yearid as yearid
 ,i.gradelevelshort as grade_level
 ,s.lastfirst as lastfirst
+,null as link 
 ,'Unresolved referrals older than 30 days' as error
 ,'DeansList' as sourcesystem,
 3 errorid
@@ -1063,6 +1070,8 @@ JOIN (SELECT DISTINCT
     and i.CloseTS IS NULL
     and i.CreateTS < '10-OCT-2016'
 
+union all 
+
 
 -----------------------MISSING INFRACTION
 
@@ -1074,6 +1083,7 @@ i.studentschoolid as student_number
 ,cal.yearid as yearid
 ,i.gradelevelshort as grade_level
 ,s.lastfirst as lastfirst
+,null as link
 ,'Missing Infraction' as error
 ,'DeansList' as sourcesystem,
 4 errorid
@@ -1092,6 +1102,8 @@ JOIN (SELECT DISTINCT
         ) CAL ON CAL.DATE_VALUE = I.CREATETS
 where infraction IS NULL
 
+union all 
+
 
 -----------------------MISSING INJURY TYPE
 
@@ -1103,6 +1115,7 @@ i.studentschoolid as student_number
 ,cal.yearid as yearid
 ,i.gradelevelshort as grade_level
 ,s.lastfirst as lastfirst
+,null as link 
 ,'Missing injury type' as error
 ,'DeansList' as sourcesystem,
 5 errorid
@@ -1122,5 +1135,6 @@ JOIN (SELECT DISTINCT
 where injurytype IS NULL 
 and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
 'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
+
 
 ```
