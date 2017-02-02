@@ -1175,5 +1175,7 @@ JOIN (SELECT DISTINCT
         ,DATE_VALUE
         FROM POWERSCHOOL.POWERSCHOOL_CALENDAR_DAY CD
         ) CAL ON CAL.DATE_VALUE = I.CREATETS
+where infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
+	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
 
 ```
