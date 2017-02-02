@@ -1136,11 +1136,7 @@ where injurytype IS NULL
 and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
 'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
 
-
-```
-
---------------------------------MISSING INJURY TYPE
-```
+------------------------------MISSING INJURY TYPE
 select
 i.studentschoolid as student_number
 ,sch.abbreviation as school_name
@@ -1155,9 +1151,6 @@ CASE
 END AS GRADE_LEVEL,
 s.lastfirst as lastfirst,
 'https://kippdc.deanslistsoftware.com/incidents/' + CAST(I.INCIDENTID AS VARCHAR) AS LINK,
-'Missing Injury Type' as error,
-'DeansList' as sourcesystem,
-33 errorid,
 case when injurytype IS NULL 
 	and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
 	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
@@ -1166,7 +1159,9 @@ case when injurytype IS NULL
 		and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
 	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
 		then injurytype
-		end as 'Injury Type'
+		end as error,
+'DeansList' as sourcesystem,
+33 as errorid
 from custom.custom_dlincidents_raw i
 JOIN CUSTOM.CUSTOM_DLSCHOOLBRIDGE SB ON SB.DLSCHOOLID = I.SCHOOLID
 JOIN POWERSCHOOL.POWERSCHOOL_SCHOOLS SCH ON SCH.SCHOOL_NUMBER = SB.PSSCHOOLID
@@ -1180,6 +1175,5 @@ JOIN (SELECT DISTINCT
         ,DATE_VALUE
         FROM POWERSCHOOL.POWERSCHOOL_CALENDAR_DAY CD
         ) CAL ON CAL.DATE_VALUE = I.CREATETS
- 
- 
+
 ```
