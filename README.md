@@ -1138,3 +1138,48 @@ and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment',
 
 
 ```
+
+--------------------------------MISSING INJURY TYPE
+```
+select
+i.studentschoolid as student_number
+,sch.abbreviation as school_name
+,i.injurytype as error_group,
+CAST(ISSUETS AS DATE) AS ERROR_DATE,
+cal.yearid as yearid,
+CASE
+    WHEN GRADELEVELSHORT = 'PK3' THEN -2
+    WHEN GRADELEVELSHORT = 'PK4' THEN -1
+    WHEN GRADELEVELSHORT = 'K' THEN 0
+    ELSE CAST(LEFT(I.GRADELEVELSHORT,1) AS INT)
+END AS GRADE_LEVEL,
+s.lastfirst as lastfirst,
+'https://kippdc.deanslistsoftware.com/incidents/' + CAST(I.INCIDENTID AS VARCHAR) AS LINK,
+'Missing Injury Type' as error,
+'DeansList' as sourcesystem,
+33 errorid,
+case when injurytype IS NULL 
+	and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
+	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
+		then '***Missing Injury Type***'
+		when injurytype IS NOT NULL 
+		and infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
+	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
+		then injurytype
+		end as 'Injury Type'
+from custom.custom_dlincidents_raw i
+JOIN CUSTOM.CUSTOM_DLSCHOOLBRIDGE SB ON SB.DLSCHOOLID = I.SCHOOLID
+JOIN POWERSCHOOL.POWERSCHOOL_SCHOOLS SCH ON SCH.SCHOOL_NUMBER = SB.PSSCHOOLID
+JOIN POWERSCHOOL.POWERSCHOOL_STUDENTS S ON S.STUDENT_NUMBER = I.STUDENTSCHOOLID
+JOIN (SELECT DISTINCT
+        CASE 
+            WHEN DATEPART(MM,CD.DATE_VALUE)>=7 THEN RIGHT(DATEPART(YY,CD.DATE_VALUE),2)+10
+            WHEN DATEPART(MM,CD.DATE_VALUE)<=6 THEN RIGHT(DATEPART(YY,CD.DATE_VALUE),2)+9
+            ELSE NULL 
+        END YEARID
+        ,DATE_VALUE
+        FROM POWERSCHOOL.POWERSCHOOL_CALENDAR_DAY CD
+        ) CAL ON CAL.DATE_VALUE = I.CREATETS
+ 
+ 
+```
