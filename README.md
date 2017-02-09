@@ -1177,5 +1177,46 @@ JOIN (SELECT DISTINCT
         ) CAL ON CAL.DATE_VALUE = I.CREATETS
 where infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
 	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
+	
+-------------Enrollment Error
+select
+student_number as student_number,
+sch.abbreviation as school_name,
+s.entrycode as error_group,
+CAST (exitdate AS DATE) as error_date,
+cal.yearid as yearid,
+grade_level as grade_level,
+lastfirst as lastfirst,
+'https://powerschool.kippdc.org/admin/students/allenrollments.html?frn=001'+CAST(S.DCID AS VARCHAR) AS LINK,
+CASE 
+  WHEN ((exitdate > '08-AUG-16' AND grade_level BETWEEN -1 AND 8)
+     OR (exitdate > '15-AUG-16' AND (grade_level = -2 OR grade_level = 9))
+     OR (exitdate > '22-AUG-16' AND grade_level BETWEEN 10 AND 12)) 
+	THEN 'Enrollment Error'
+	ELSE NULL
+END AS error,
+'PowerSchool' as sourcesystem,
+34 as errorid
+from powerschool.powerschool_STUDENTS s
+JOIN CUSTOM.CUSTOM_DLSCHOOLBRIDGE SB ON SB.PSSCHOOLID = s.SCHOOLID
+JOIN POWERSCHOOL.POWERSCHOOL_SCHOOLS SCH ON SCH.SCHOOL_NUMBER = SB.PSSCHOOLID
+JOIN (SELECT DISTINCT
+        CASE 
+          WHEN DATEPART(MM,CD.DATE_VALUE)>=7 THEN RIGHT(DATEPART(YY,CD.DATE_VALUE),2)+10
+           WHEN DATEPART(MM,CD.DATE_VALUE)<=6 THEN RIGHT(DATEPART(YY,CD.DATE_VALUE),2)+9
+           ELSE NULL 
+         END YEARID
+        ,DATE_VALUE
+       FROM POWERSCHOOL.POWERSCHOOL_CALENDAR_DAY CD
+        ) CAL ON CAL.DATE_VALUE = s.entrydate
+where entrycode = '1800'
+AND 
+CASE 
+	WHEN ((exitdate > '08-AUG-16' AND grade_level BETWEEN -1 AND 8)
+     OR (exitdate > '15-AUG-16' AND (grade_level = -2 OR grade_level = 9))
+     OR (exitdate > '22-AUG-16' AND grade_level BETWEEN 10 AND 12)) 
+	THEN 'Enrollment Error'
+	ELSE NULL
+END = 'Enrollment Error' 
 
 ```
