@@ -1001,6 +1001,7 @@ JOIN (SELECT DISTINCT
         ) CAL ON CAL.DATE_VALUE = I.CREATETS
 where infraction in ('Bullying', 'Fighting', 'Sexual Misconduct or Harrassment', 
 	'Theft', 'Threatening Physical Harm', 'Violent Incident (WITH physical injury) (VIOWINJ)')
+AND injurytype IS NULL 
 
 UNION ALL 
 
