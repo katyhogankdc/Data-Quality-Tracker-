@@ -1152,8 +1152,8 @@ DL_ATT.SCHOOLNAME AS SCHOOL_NAME,
 'DL: '+DL_ATT.BEHAVIOR+' / '+'PS: '+PS_ATT.[DESCRIPTION] AS ERROR_GROUP, --mismatched attendance values in DL and PS
 CAST(DL_ATT.BEHAVIORDATE AS DATE) AS ERROR_DATE
 ,PS_ATT.YEARID AS YEARID,
-S.GRADE_LEVEL ,
-S.LASTFIRST,
+S.GRADE_LEVEL AS GRADE_LEVEL,
+S.LASTFIRST AS LASTFIRST,
 'https://powerschool.kippdc.org/admin/attendance/view/daily.html?frn=001' + CAST(S.DCID AS VARCHAR) AS LINK,
 'Mismatch between Deanslist and Powerschool attendance records when PS is Present' AS ERROR,
 'PowerSchool' AS SOURCESYSTEM,
