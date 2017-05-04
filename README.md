@@ -1243,4 +1243,12 @@ AND DL_ATT.BEHAVIOR = 'No Attendance Taken'
 AND DL_ATT.STUDENTSCHOOLID != 10075
 AND PS_ATT.YEARID = 26 
 
+--------DUPLICATE RECORDS IN INCIDENTS TABLE
+select count(*), incidentid, studentschoolid
+from(
+select incidentid, studentschoolid
+from custom.custom_DLIncidents_raw
+where incidentID = incidentID) sub 
+group by sub.incidentid, sub.studentschoolid
+having count(*) > 1
 ```
